@@ -1,3 +1,5 @@
+#define archt_nocheck
+
 #ifndef __KBESSEL__
 #ifdef  __KBESSEL__
 gcc -O2 kbessel.c -lm -lgmp -lmpfr -lmpfi -DKBESSEL_MAIN -o kbessel
