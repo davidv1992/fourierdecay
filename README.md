@@ -1,4 +1,4 @@
-This repository contains the code used to create the plots in ["Unruh detectors, Feynman diagrams, acceleration and decay" by Wim Beenakker and David Venhoek](). It depends on the GMP, MPFR and MPFI libraries, which should be installed before running the code.
+This repository contains the code used to create the plots in ["Unruh detectors, Feynman diagrams, acceleration and decay" by Wim Beenakker and David Venhoek](http://arxiv.org/abs/2501.11516). It depends on the GMP, MPFR and MPFI libraries, which should be installed before running the code.
 
 To recreate figure 1, run
 ```
