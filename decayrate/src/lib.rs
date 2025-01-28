@@ -11,13 +11,13 @@ pub fn gamma_a(ctx: &mut Ctx, a: f64, delta: f64, m: f64, d: f64, n: usize) -> f
 
     let prep = 2.0 * m / (a * PI);
     let r = 2.0 * delta / a;
-    let xprop = 2.0 / a;
+    let xprop = 2.0 * m / a;
     let mut summands = vec![0.0; n + 1];
     for i in 1..n {
         let uinv = (n as f64) / (i as f64);
         summands[i] = prep
             * uinv.powi(2)
-            * gamma0(uinv, m, d)
+            * gamma0(m*uinv, m, d)
             * ctx.kbessel(r, xprop * uinv)
             * (if i % 2 == 1 { 2.0 } else { 1.0 });
     }
