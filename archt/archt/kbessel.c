@@ -307,6 +307,24 @@ double kbessel_wrap(mpfi_ptr f, double r, double x) {
   return mpfi_get_d(f);
 }
 
+void kbessel_both(mpfi_ptr f, double r, double x, double *low, double *high) {
+  mpfi_t rv, xv;
+  mpfi_init2(rv,mpfi_get_prec(f));
+  mpfi_init2(xv,mpfi_get_prec(f));
+  mpfi_set_d(&rv, r);
+  mpfi_set_d(&xv, x);
+  int e = kbessel(f, rv, xv);
+  mpfi_clear(&rv);
+  mpfi_clear(&xv);
+  mpfr_t left, right;
+  mpfr_init(&left);
+  mpfr_init(&right);
+  mpfi_get_left(&left, f);
+  mpfi_get_right(&right, f);
+  *low = mpfr_get_d(&left, MPFR_RNDD);
+  *high = mpfr_get_d(&right, MPFR_RNDU);
+}
+
 #ifdef KBESSEL_MAIN
 
 int main(int argc,char **argv) {
