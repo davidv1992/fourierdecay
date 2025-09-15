@@ -39,7 +39,7 @@ pub fn gamma0_multiparticle(delta: f64, m: &[f64], d: f64, n: usize) -> f64 {
 
 pub fn gamma0_weakdecay(delta: f64, m: f64, n: usize) -> f64 {
     assert_eq!(n % 2, 1);
-    let limit = (delta * delta - m * m) / (2.0 * delta);
+    let limit = (delta * delta - m * m).sqrt();
     let step = limit / ((n - 1) as f64);
     let mut summands = vec![0.0; n];
 
@@ -104,6 +104,10 @@ pub fn gamma_a(
 pub fn gammma_a_d2(ctx: &mut Ctx, a: f64, delta: f64, m: f64) -> f64 {
     let r = delta / a;
     (1.0 / (a * PI)) * ((ctx.kbessel(r, m / a)).powi(2))
+}
+
+pub fn gamma_a_photon(a: f64, delta: f64) -> f64 {
+    (delta.powi(3) / (1.0 - (-(2.0 * PI * delta / a)).exp())) * (1.0 + a * a / (delta * delta))
 }
 
 #[cfg(test)]
