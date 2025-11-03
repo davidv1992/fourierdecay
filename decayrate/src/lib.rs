@@ -110,9 +110,27 @@ pub fn gamma_a_photon(a: f64, delta: f64) -> f64 {
     (delta.powi(3) / (1.0 - (-(2.0 * PI * delta / a)).exp())) * (1.0 + a * a / (delta * delta))
 }
 
+pub fn gamma_a_massless(a: f64, delta: f64, order: usize) -> f64 {
+    let rat = delta/a;
+    let invrat = a/delta;
+    let invrat2 = invrat.powi(2);
+    let ho = order / 2;
+    if order.is_multiple_of(2) {
+        (1..=ho).map(|v| ((v as f64).powi(2) * invrat2 * 0.25 + 1.0)).product::<f64>() * (delta.powi(order as _) / (1.0 + ( -2.0  * PI * rat).exp()))
+    } else {
+        (1..=ho).map(|v| ((v as f64).powi(2) * invrat2 + 1.0)).product::<f64>() * (delta.powi(order as _)) / (1.0 - (- 2.0 * PI * rat).exp())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn photon() {
+        assert_eq!(gamma_a_photon(0.0, 1.0), gamma_a_massless(0.0, 1.0, 3));
+        assert!(gamma_a_photon(0.5, 1.0) - gamma_a_massless(0.5, 1.0, 3) < 0.1)
+    }
 
     #[test]
     fn basic() {
