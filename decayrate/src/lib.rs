@@ -37,6 +37,34 @@ pub fn gamma0_multiparticle(delta: f64, m: &[f64], d: f64, n: usize) -> f64 {
     }
 }
 
+pub fn gamma0_pion_deltadiff(delta: f64, m: f64) -> f64 {
+    (delta.powi(2) + 2.0 * m * delta) / ((delta + m).powi(3))
+}
+
+pub fn gamma_a_pion_deltadiff(
+    ctx: &mut Ctx,
+    a: f64,
+    delta: f64,
+    m: f64,
+    cutoff: f64,
+    order: usize,
+    n: usize,
+) -> f64 {
+    gamma_a(ctx, a, delta, cutoff, n, |dp| {
+        gamma0_pion_deltadiff(dp, m)
+            - (1i32..=order.try_into().unwrap())
+                .map(|i| f64::from(i * (i + 3) / 2) * ((-m).powi(-i - 1)) * (dp.powi(i)))
+                .sum::<f64>()
+    }) + (1i32..=order.try_into().unwrap())
+        .map(|i| {
+            f64::from(i * (i + 3) / 2)
+                * ((-m).powi(-i - 1))
+                * gamma_a_massless(a, delta, i.try_into().unwrap())
+                //* gamma_a(ctx, a, delta, cutoff, n, |dp| dp.powi(i))
+        })
+        .sum::<f64>()
+}
+
 pub fn gamma0_weakdecay(delta: f64, m: f64, n: usize) -> f64 {
     assert_eq!(n % 2, 1);
     let limit = (delta * delta - m * m).sqrt();
@@ -111,14 +139,21 @@ pub fn gamma_a_photon(a: f64, delta: f64) -> f64 {
 }
 
 pub fn gamma_a_massless(a: f64, delta: f64, order: usize) -> f64 {
-    let rat = delta/a;
-    let invrat = a/delta;
+    let rat = delta / a;
+    let invrat = a / delta;
     let invrat2 = invrat.powi(2);
     let ho = order / 2;
     if order.is_multiple_of(2) {
-        (1..=ho).map(|v| ((v as f64).powi(2) * invrat2 * 0.25 + 1.0)).product::<f64>() * (delta.powi(order as _) / (1.0 + ( -2.0  * PI * rat).exp()))
+        (1..=ho)
+            .map(|v| (v as f64).powi(2) * invrat2 * 0.25 + 1.0)
+            .product::<f64>()
+            * (delta.powi(order as _) / (1.0 + (-2.0 * PI * rat).exp()))
     } else {
-        (1..=ho).map(|v| ((v as f64).powi(2) * invrat2 + 1.0)).product::<f64>() * (delta.powi(order as _)) / (1.0 - (- 2.0 * PI * rat).exp())
+        (1..=ho)
+            .map(|v| (v as f64).powi(2) * invrat2 + 1.0)
+            .product::<f64>()
+            * (delta.powi(order as _))
+            / (1.0 - (-2.0 * PI * rat).exp())
     }
 }
 
