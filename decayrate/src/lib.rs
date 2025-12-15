@@ -145,7 +145,7 @@ pub fn gamma_a_massless(a: f64, delta: f64, order: usize) -> f64 {
     let ho = order / 2;
     if order.is_multiple_of(2) {
         (1..=ho)
-            .map(|v| (v as f64).powi(2) * invrat2 * 0.25 + 1.0)
+            .map(|v| ((2*v-1) as f64).powi(2) * invrat2 * 0.25 + 1.0)
             .product::<f64>()
             * (delta.powi(order as _) / (1.0 + (-2.0 * PI * rat).exp()))
     } else {
@@ -202,5 +202,24 @@ mod tests {
         assert!((c - d).abs() < 1e-5);
 
         println!("{}", gamma0_multiparticle(1.5, &[1.0, 0.0, 0.0], 4.0, 101));
+    }
+
+    #[test]
+    fn massless() {
+        assert!((gamma_a_massless(0.0, 1.5, 0) - 1.5f64.powi(0)) < 0.001);
+        assert!((gamma_a_massless(0.0, 1.5, 1) - 1.5f64.powi(1)) < 0.001);
+        assert!((gamma_a_massless(0.0, 1.5, 2) - 1.5f64.powi(2)) < 0.001);
+        assert!((gamma_a_massless(0.0, 1.5, 3) - 1.5f64.powi(3)) < 0.001);
+        assert!((gamma_a_massless(0.0, 1.5, 4) - 1.5f64.powi(4)) < 0.001);
+        assert!((gamma_a_massless(0.0, 1.5, 5) - 1.5f64.powi(5)) < 0.001);
+        assert!((gamma_a_massless(0.0, 1.5, 6) - 1.5f64.powi(6)) < 0.001);
+
+        assert!((0.95857 - gamma_a_massless(3.0, 1.5, 0)/gamma_a_massless(0.0, 1.5, 0)).abs() < 0.0001);
+        assert!((1.04517 - gamma_a_massless(3.0, 1.5, 1)/gamma_a_massless(0.0, 1.5, 1)).abs() < 0.0001);
+        assert!((1.91715 - gamma_a_massless(3.0, 1.5, 2)/gamma_a_massless(0.0, 1.5, 2)).abs() < 0.0001);
+        assert!((5.22583 - gamma_a_massless(3.0, 1.5, 3)/gamma_a_massless(0.0, 1.5, 3)).abs() < 0.001);
+        assert!((19.1715 - gamma_a_massless(3.0, 1.5, 4)/gamma_a_massless(0.0, 1.5, 4)).abs() < 0.001);
+        assert!((88.8391 - gamma_a_massless(3.0, 1.5, 5)/gamma_a_massless(0.0, 1.5, 5)).abs() < 0.1);
+        assert!((498.46 - gamma_a_massless(3.0, 1.5, 6)/gamma_a_massless(0.0, 1.5, 6)).abs() < 0.1);
     }
 }
